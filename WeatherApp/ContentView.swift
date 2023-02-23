@@ -10,33 +10,37 @@ import WeatherKit
 import CoreLocation
 
 struct ContentView: View {
-    static let location = CLLocation(latitude: .init(floatLiteral: 39.3111),
-                                     longitude: .init(floatLiteral: 94.9225))
+    static let location = CLLocation(latitude: .init(floatLiteral: 39.313015),
+                                     longitude: .init(floatLiteral:-94.941147))
     
     @State var weather: Weather?
     
     var body: some View {
+
+        ZStack { EmptyView() }
+          .background(
+             Image("clouds")
+                .resizable()
+                .edgesIgnoringSafeArea(.all)
+                .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+          )
+        
         if let weather = weather {
-            VStack {
-//                ContentView.location.fetchCityAndCountry { city, country, error in
-//                    guard let city = city,
-//                          let country = country,
-//                          error == nil else { return }
-//                    print(city + ", " + country)
-//                }
-                
-                Text(weather.currentWeather.temperature.description)
-                Text("\(weather.currentWeather.temperature.converted(to: .fahrenheit).formatted().description)")
-                Text(weather.currentWeather.condition.description)
-                Image(systemName: weather.currentWeather.symbolName)
-            }
-            .padding()
+            Text("Leavenworth, KS")
+                .font(.largeTitle)
             
-        } else {
-            ProgressView()
-                .task {
-                    await getWeather()
+            HudView {
+                VStack {
+                    Text(weather.currentWeather.temperature.description)
+                    Text("\(weather.currentWeather.temperature.converted(to: .fahrenheit).formatted().description)")
+                    Text(weather.currentWeather.condition.description)
+                    Image(systemName: weather.currentWeather.symbolName)
                 }
+                .padding()
+            }
+        } else {
+          ProgressView()
+            .task { await getWeather() }
         }
     }
 

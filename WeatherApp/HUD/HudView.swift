@@ -11,13 +11,13 @@ struct HudView<Content: View>: View {
     @ViewBuilder let content: Content
 
     var body: some View {
-      content
-        .padding(.horizontal, 12)
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 10.0)
-                .foregroundColor(Color.green)
-                .shadow(color: Color(.black).opacity(0.50), radius: 5, x: 0, y: 5))
+        content
+            .padding(.horizontal, 12)
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 10.0)
+                    .foregroundColor(Color.green)
+                    .shadow(color: Color(.black).opacity(0.50), radius: 5, x: 0, y: 5))            
     }
 }
 
