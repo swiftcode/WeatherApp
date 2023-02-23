@@ -6,16 +6,54 @@
 //
 
 import SwiftUI
+import WeatherKit
+import CoreLocation
 
 struct ContentView: View {
+    static let location = CLLocation(latitude: .init(floatLiteral: 39.3111),
+                                     longitude: .init(floatLiteral: 94.9225))
+    
+    @State var weather: Weather?
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        if let weather = weather {
+            VStack {
+//                ContentView.location.fetchCityAndCountry { city, country, error in
+//                    guard let city = city,
+//                          let country = country,
+//                          error == nil else { return }
+//                    print(city + ", " + country)
+//                }
+                
+                Text(weather.currentWeather.temperature.description)
+                Text("\(weather.currentWeather.temperature.converted(to: .fahrenheit).formatted().description)")
+                Text(weather.currentWeather.condition.description)
+                Image(systemName: weather.currentWeather.symbolName)
+            }
+            .padding()
+            
+        } else {
+            ProgressView()
+                .task {
+                    await getWeather()
+                }
         }
-        .padding()
+    }
+
+    func getWeather() async {
+        do {
+            weather = try await Task {
+                try await WeatherService.shared.weather(for: ContentView.location)
+            }.value
+        } catch {
+            fatalError("\(error)")
+        }
+    }
+}
+
+extension CLLocation {
+    func fetchCityAndCountry(completion: @escaping (_ city: String?, _ country:  String?, _ error: Error?) -> ()) {
+        CLGeocoder().reverseGeocodeLocation(self) { completion($0?.first?.locality, $0?.first?.country, $1) }
     }
 }
 
