@@ -23,16 +23,25 @@ struct ContentView: View {
                 .resizable()
                 .edgesIgnoringSafeArea(.all)
                 .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+                .ignoresSafeArea()
           )
         
         if let weather = weather {
-            Text("Leavenworth, KS")
-                .font(.largeTitle)
+            let celcius = weather.currentWeather.temperature.converted(to: .celsius).value
+            let fahrenheit = weather.currentWeather.temperature.converted(to: .fahrenheit).value
+                        
+            let c = celcius.round()
+            let f = fahrenheit.round()
+            
+            HudView {
+                Text("Leavenworth, KS")
+                    .font(.largeTitle)
+            }
             
             HudView {
                 VStack {
-                    Text(weather.currentWeather.temperature.description)
-                    Text("\(weather.currentWeather.temperature.converted(to: .fahrenheit).formatted().description)")
+                    Text(verbatim: "\(c)")
+                    Text(verbatim: "\(f)")
                     Text(weather.currentWeather.condition.description)
                     Image(systemName: weather.currentWeather.symbolName)
                 }
@@ -52,6 +61,12 @@ struct ContentView: View {
         } catch {
             fatalError("\(error)")
         }
+    }
+}
+
+extension Double {
+    func round() -> String {
+        return String(format: "%.0f", self)
     }
 }
 
