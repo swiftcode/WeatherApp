@@ -20,12 +20,10 @@ struct ContentView: View {
         ZStack { EmptyView() }
           .background(
              Image("clouds")
-                .resizable()
-                .edgesIgnoringSafeArea(.all)
                 .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
                 .ignoresSafeArea()
           )
-        
+          
         if let weather = weather {
             let celcius = weather.currentWeather.temperature.converted(to: .celsius).value
             let fahrenheit = weather.currentWeather.temperature.converted(to: .fahrenheit).value
@@ -40,8 +38,8 @@ struct ContentView: View {
             
             HudView {
                 VStack {
-                    Text(verbatim: "\(c)")
-                    Text(verbatim: "\(f)")
+                    Text(verbatim: "\(c) °C")
+                    Text(verbatim: "\(f) °F")
                     Text(weather.currentWeather.condition.description)
                     Image(systemName: weather.currentWeather.symbolName)
                 }
