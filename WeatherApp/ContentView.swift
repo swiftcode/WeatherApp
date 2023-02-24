@@ -6,16 +6,71 @@
 //
 
 import SwiftUI
+import WeatherKit
+import CoreLocation
 
 struct ContentView: View {
+    static let location = CLLocation(latitude: .init(floatLiteral: 39.313015),
+                                     longitude: .init(floatLiteral:-94.941147))
+    
+    @State var weather: Weather?
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+
+        ZStack { EmptyView() }
+          .background(
+             Image("clouds")
+                .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+                .ignoresSafeArea()
+          )
+          
+        if let weather = weather {
+            let celcius = weather.currentWeather.temperature.converted(to: .celsius).value
+            let fahrenheit = weather.currentWeather.temperature.converted(to: .fahrenheit).value
+                        
+            let c = celcius.round()
+            let f = fahrenheit.round()
+            
+            HudView {
+                Text("Leavenworth, KS")
+                    .font(.largeTitle)
+            }
+            
+            HudView {
+                VStack {
+                    Text(verbatim: "\(c) °C")
+                    Text(verbatim: "\(f) °F")
+                    Text(weather.currentWeather.condition.description)
+                    Image(systemName: weather.currentWeather.symbolName)
+                }
+                .padding()
+            }
+        } else {
+          ProgressView()
+            .task { await getWeather() }
         }
-        .padding()
+    }
+
+    func getWeather() async {
+        do {
+            weather = try await Task {
+                try await WeatherService.shared.weather(for: ContentView.location)
+            }.value
+        } catch {
+            fatalError("\(error)")
+        }
+    }
+}
+
+extension Double {
+    func round() -> String {
+        return String(format: "%.0f", self)
+    }
+}
+
+extension CLLocation {
+    func fetchCityAndCountry(completion: @escaping (_ city: String?, _ country:  String?, _ error: Error?) -> ()) {
+        CLGeocoder().reverseGeocodeLocation(self) { completion($0?.first?.locality, $0?.first?.country, $1) }
     }
 }
 
