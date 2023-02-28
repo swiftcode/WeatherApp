@@ -14,6 +14,7 @@ struct ContentView: View {
                                      longitude: .init(floatLiteral:-94.941147))
     
     @State var weather: Weather?
+    let weatherView = WeatherView()
     
     var body: some View {
 
@@ -24,6 +25,10 @@ struct ContentView: View {
                 .ignoresSafeArea()
           )
           
+        VStack {
+            weatherView            
+        }
+        
         if let weather = weather {
             let celcius = weather.currentWeather.temperature.converted(to: .celsius).value
             let fahrenheit = weather.currentWeather.temperature.converted(to: .fahrenheit).value

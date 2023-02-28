@@ -14,10 +14,11 @@ struct HudView<Content: View>: View {
         content
             .padding(.horizontal, 12)
             .padding(16)
+            .foregroundColor(Color.white)
             .background(
                 RoundedRectangle(cornerRadius: 10.0)
-                    .foregroundColor(Color("HudGrey"))
-                    .opacity(0.80)
+                    .foregroundColor(Color("HudBlue"))
+                    .opacity(0.70)
                     .shadow(color: Color(.black).opacity(0.50), radius: 5, x: 0, y: 5))
     }
 }
